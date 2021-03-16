@@ -1,21 +1,21 @@
-/**
- * @format
- */
-
+import {shallow, ShallowWrapper} from 'enzyme';
 import React from 'react';
-import 'react-native';
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+import {View} from 'react-native';
 import App from '../../src/App';
 
-it('renders correctly', () => {
-  renderer.create(<App />);
+const createTestProps = (props: Object) => ({
+  ...props,
 });
 
-function sum(a, b) {
-  return a + b;
-}
+describe('App', () => {
+  describe('rendering', () => {
+    let wrapper: ShallowWrapper;
+    beforeEach(() => {
+      wrapper = shallow(<App />);
+    });
 
-test('adds 1 + 2 to equal 3', () => {
-  expect(sum(1, 2)).toBe(3);
+    it('should render a <View />', () => {
+      expect(wrapper.find(View)).toHaveLength(1);
+    });
+  });
 });

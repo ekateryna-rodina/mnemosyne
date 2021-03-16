@@ -6,32 +6,41 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest __tests__/**/*.spec.tsx",
+    "test": "jest __tests__/**/*.spec.tsx --forceExit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "moment": "^2.29.1",
     "react": "16.13.1",
-    "react-native": "0.63.4"
+    "react-native": "0.63.4",
+    "react-native-elements": "^3.3.1",
+    "react-native-vector-icons": "^8.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
-    "@babel/runtime": "^7.8.4",
-    "babel-core": "^7.0.0-beta.47",
     "@babel/generator": "^7.0.0-beta.47",
-    "babel-preset-react-native": "5.0.2",
+    "@babel/runtime": "^7.8.4",
     "@jonny/react-native-mock": "^0.4.2",
     "@react-native-community/eslint-config": "^1.1.0",
-    "@testing-library/react-native": "^7.2.0",
+    "@types/enzyme": "^3.10.8",
+    "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/jest": "^26.0.20",
     "@types/react-native": "^0.63.2",
     "@types/react-test-renderer": "^16.9.2",
+    "babel-core": "^7.0.0-beta.47",
     "babel-jest": "^25.1.0",
+    "babel-preset-react-native": "5.0.2",
     "detox": "^18.7.1",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.6",
     "eslint": "^6.5.1",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
+    "jest-fetch-mock": "^3.0.3",
     "metro-react-native-babel-preset": "^0.59.0",
+    "react-dom": "^17.0.1",
     "react-test-renderer": "16.13.1",
+    "ts-jest": "^26.5.3",
     "typescript": "^3.8.3"
   },
   "resolutions": {
@@ -39,6 +48,16 @@
   },
   "jest": {
     "preset": "react-native",
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js",
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.jest.json"
+      }
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -46,6 +65,12 @@
       "jsx",
       "json",
       "node"
+    ],
+    "modulePaths": [
+      "<rootDir>"
+    ],
+    "setupFiles": [
+      "./__tests__/setup.ts"
     ]
   }
 }
