@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pressable, TextInput, View} from 'react-native';
+import {Pressable, Text, TextInput, View} from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -10,9 +10,18 @@ EvilIcon.loadFont();
 interface IActionsHeaderProps {
   isFilterShown: boolean;
   setIsFilterShown: (isShown: boolean) => void;
+  handleSeach: () => void;
+  setSearchTerm: (value: string) => void;
+  searchTerm: string;
 }
 const ActionsHeader = (props: IActionsHeaderProps) => {
-  const {isFilterShown, setIsFilterShown} = props;
+  const {
+    isFilterShown,
+    setIsFilterShown,
+    handleSeach,
+    setSearchTerm,
+    searchTerm,
+  } = props;
   return (
     <View
       style={{
@@ -25,11 +34,25 @@ const ActionsHeader = (props: IActionsHeaderProps) => {
         padding: 5,
         marginHorizontal: 15,
       }}>
-      <TextInput style={{flex: 2}} testID="searchInput" />
+      <TextInput
+        style={{flex: 2}}
+        testID="searchInput"
+        value={searchTerm}
+        onChangeText={(text) => setSearchTerm(text)}
+      />
+      <Text testID="email"></Text>
+      {searchTerm !== '' && (
+        <Pressable
+          style={{flex: 1}}
+          testID="clearSearch"
+          onPress={() => setSearchTerm('')}>
+          <Text>X</Text>
+        </Pressable>
+      )}
       <Pressable
         style={{flex: 1}}
         testID="searchButton"
-        onPress={() => console.error()}>
+        onPress={() => handleSeach()}>
         <EvilIcon name="search" color="black" size={22} />
       </Pressable>
       <Pressable
