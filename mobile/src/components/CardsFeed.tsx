@@ -10,7 +10,7 @@ const CardsFeed = () => {
   const [showFavorites, setShowFavorites] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const searchHandler = () => {
-    console.error('search');
+    // const searchResult = await;
   };
   const data = Object.keys(cards).map((item) => cards[item]);
   return (
