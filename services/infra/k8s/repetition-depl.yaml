@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: repetition-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: repetition
+  template:
+    metadata:
+      labels:
+        app: repetition
+    spec:
+      containers:
+        - name: repetition
+          image: krodina/repetition:latest
+          imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: repetition-srv
+spec:
+  selector:
+    app: repetition
+  ports:
+    - name: repetition
+      protocol: TCP
+      port: 3002
+      targetPort: 3002
