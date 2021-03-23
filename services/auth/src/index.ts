@@ -1,4 +1,6 @@
 import express from "express";
+import { NotFoundError } from "./errors/notFoundError";
+import { errorHandler } from "./middleware/errorHandler";
 import { currentUserRouter } from "./routes/currentuser";
 import { signInRouter } from "./routes/signin";
 import { signOutRouter } from "./routes/signout";
@@ -17,6 +19,11 @@ app.use(currentUserRouter);
 app.use(signUpRouter);
 app.use(signInRouter);
 app.use(signOutRouter);
+
+app.all("*", (req, res, next) => {
+  next(new NotFoundError());
+});
+app.use(errorHandler);
 
 app.listen(3005, () => {
   console.log("version 21");
