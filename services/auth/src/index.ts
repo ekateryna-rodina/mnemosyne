@@ -1,4 +1,6 @@
 import express from "express";
+import mongoose from "mongoose";
+import { DatabaseConnectionError } from "./errors/databaseConnectionError";
 import { NotFoundError } from "./errors/notFoundError";
 import { errorHandler } from "./middleware/errorHandler";
 import { currentUserRouter } from "./routes/currentuser";
@@ -25,7 +27,22 @@ app.all("*", (req, res, next) => {
 });
 app.use(errorHandler);
 
-app.listen(3005, () => {
-  console.log("version 21");
-  console.log("listening on port 3005");
-});
+const start = async () => {
+  try {
+    await mongoose.connect("mongodb://auth-mongo-srv:27017/mne-auth", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    });
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    throw new DatabaseConnectionError();
+  }
+
+  app.listen(3005, () => {
+    console.log("version 21");
+    console.log("listening on port 3005");
+  });
+};
+
+start();

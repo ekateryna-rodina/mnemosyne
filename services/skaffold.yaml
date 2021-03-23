@@ -8,14 +8,6 @@ build:
   local:
     push: false
   artifacts:
-    - image: krodina/mobile
-      context: mobile
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
     - image: krodina/auth
       context: auth
       docker:

@@ -1,31 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cards-depl
+  name: auth-mongo-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cards
+      app: auth-mongo
   template:
     metadata:
       labels:
-        app: cards
+        app: auth-mongo
     spec:
       containers:
-        - name: cards
-          image: krodina/cards:latest
-          imagePullPolicy: Never
+        - name: auth-mongo
+          image: mongo
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: cards-srv
+  name: auth-mongo-srv
 spec:
   selector:
-    app: cards
+    app: auth-mongo
   ports:
-    - name: cards
+    - name: db
       protocol: TCP
-      port: 3001
-      targetPort: 3001
+      port: 27017
+      targetPort: 27017
