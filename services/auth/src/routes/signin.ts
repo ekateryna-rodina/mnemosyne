@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
 import { BadRequestError } from "../errors/badRequestError";
@@ -13,35 +13,38 @@ router.post(
     body("password").trim().notEmpty().withMessage("Password must be provided"),
   ],
   validateRequest,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new BadRequestError("Credendials are not valid");
+      }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new BadRequestError("Credendials are not valid");
+      // check password
+      const passwordMatch = await Password.match(user.password, password);
+      if (!passwordMatch) {
+        throw new BadRequestError("Credentials are not valid");
+      }
+
+      // generate jwt
+      const userJwt = jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+        },
+        process.env.JWT_KEY!
+      );
+
+      // store token in session
+      req.session = {
+        jwt: userJwt,
+      };
+
+      res.status(200).send(user);
+    } catch (error) {
+      next(error);
     }
-
-    // check password
-    const passwordMatch = await Password.match(user.password, password);
-    if (!passwordMatch) {
-      throw new BadRequestError("Credentials are not valid");
-    }
-
-    // generate jwt
-    const userJwt = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-      },
-      process.env.JWT_KEY!
-    );
-
-    // store token in session
-    req.session = {
-      jwt: userJwt,
-    };
-
-    res.status(200).send(user);
   }
 );
 

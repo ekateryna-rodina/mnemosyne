@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
 import { BadRequestError } from "../errors/badRequestError";
@@ -15,32 +15,36 @@ router.post(
       .withMessage("Password must be between 6 and 20 characters"),
   ],
   validateRequest,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new BadRequestError("User already exists");
+    try {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        throw new BadRequestError("User already exists");
+      }
+
+      const user = User.build({ email, password });
+      await user.save();
+
+      // generate jwt
+      const userJwt = jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+        },
+        process.env.JWT_KEY!
+      );
+
+      // store token in session
+      req.session = {
+        jwt: userJwt,
+      };
+
+      res.status(201).send(user);
+    } catch (error) {
+      next(error);
     }
-
-    const user = User.build({ email, password });
-    await user.save();
-
-    // generate jwt
-    const userJwt = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-      },
-      process.env.JWT_KEY!
-    );
-
-    // store token in session
-    req.session = {
-      jwt: userJwt,
-    };
-
-    res.status(201).send(user);
   }
 );
 
