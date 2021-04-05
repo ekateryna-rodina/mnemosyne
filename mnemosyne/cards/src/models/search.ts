@@ -13,7 +13,5 @@ export interface ISorting {
 }
 export interface ISearch {
   cards: ICard[];
-  filter: IFilter;
   pager: IPager;
-  sorting: ISorting;
 }

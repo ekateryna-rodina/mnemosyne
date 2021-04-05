@@ -78,21 +78,21 @@ it("returns all users cards", async () => {
     .set("Cookie", global.signin(1))
     .expect(200);
 
-  expect(responseFirstUser.body.length).toEqual(5);
+  expect(responseFirstUser.body.pager.total).toEqual(5);
 
   const responseSecondUser = await request(app)
     .get("/api/cards/")
     .set("Cookie", global.signin(2))
     .expect(200);
 
-  expect(responseSecondUser.body.length).toEqual(3);
+  expect(responseSecondUser.body.pager.total).toEqual(3);
 
   const responseThirdUser = await request(app)
     .get("/api/cards/")
     .set("Cookie", global.signin(3))
     .expect(200);
 
-  expect(responseThirdUser.body.length).toEqual(9);
+  expect(responseThirdUser.body.pager.total).toEqual(9);
 });
 it("returns all cards sorted asc", async () => {
   for (let c of cards) {
@@ -110,7 +110,7 @@ it("returns all cards sorted asc", async () => {
     .set("Cookie", global.signin(3))
     .expect(200);
 
-  const data = response.body.map(
+  const data = response.body.cards.map(
     (b: CardDocument) => `${b.phrase}_${b.keywords.answer}`
   );
   expect(data[0]).toEqual(
@@ -136,7 +136,7 @@ it("returns all cards sorted desc", async () => {
     .set("Cookie", global.signin(3))
     .expect(200);
 
-  const data = response.body.map(
+  const data = response.body.cards.map(
     (b: CardDocument) => `${b.phrase}_${b.keywords.answer}`
   );
 
@@ -162,7 +162,7 @@ it("returns cards filtered by tags", async () => {
     .get("/api/cards?tags=history,mythology")
     .set("Cookie", global.signin(3))
     .expect(200);
-  expect(response.body.length).toEqual(3);
+  expect(response.body.pager.total).toEqual(3);
 });
 it("returns cards which belong to the current user including public cards", async () => {
   for (let c of cards) {
@@ -179,10 +179,35 @@ it("returns cards which belong to the current user including public cards", asyn
     .get("/api/cards?showPublic=true")
     .set("Cookie", global.signin(2))
     .expect(200);
-  console.log(response.body);
-  expect(response.body.length).toEqual(6);
+  expect(response.body.pager.total).toEqual(6);
 });
-it("returns paginated result", async () => {
+it("returns paginated result (first page)", async () => {
+  for (let c of cards) {
+    const userById: UserNumber = parseInt(
+      Object.entries(users).find((e) => c.userId === e[1].id)![0]
+    ) as UserNumber;
+    await request(app)
+      .post("/api/cards")
+      .send(c)
+      .set("Cookie", global.signin(userById));
+  }
+
+  const allUserCardsResponse = await request(app)
+    .get("/api/cards?limit=3")
+    .set("Cookie", global.signin(3));
+  const userCardsIds = allUserCardsResponse.body.cards.map(
+    (c: CardDocument) => c.id
+  );
+  const response = await request(app)
+    .get(`/api/cards?limit=3&last=${userCardsIds[0]}`)
+    .set("Cookie", global.signin(3));
+  expect(response.body.pager.total).toEqual(9);
+  expect(response.body.cards.length).toEqual(3);
+  expect(response.body.cards[0].id).toEqual(userCardsIds[0]);
+  expect(response.body.cards[2].id).toEqual(userCardsIds[2]);
+});
+
+it("returns paginated result (first page)", async () => {
   for (let c of cards) {
     const userById: UserNumber = parseInt(
       Object.entries(users).find((e) => c.userId === e[1].id)![0]
@@ -196,12 +221,38 @@ it("returns paginated result", async () => {
   const allUserCardsResponse = await request(app)
     .get("/api/cards")
     .set("Cookie", global.signin(3));
-  const userCardsIds = allUserCardsResponse.body.map((c: CardDocument) => c.id);
-  console.log(userCardsIds);
+  const userCardsIds = allUserCardsResponse.body.cards.map(
+    (c: CardDocument) => c.id
+  );
   const response = await request(app)
-    .get(`/api/cards?limit=3&last=${userCardsIds[0]}`)
+    .get("/api/cards?limit=3")
     .set("Cookie", global.signin(3));
-  expect(response.body.length).toEqual(3);
-  // expect(response.body[0].id).toEqual([userCardsIds[0].id]);
-  // expect(response.body[2].id).toEqual([userCardsIds[2].id]);
+  expect(response.body.pager.total).toEqual(9);
+  expect(response.body.cards.length).toEqual(3);
+  expect(response.body.cards[0].id).toEqual(userCardsIds[0]);
+  expect(response.body.cards[2].id).toEqual(userCardsIds[2]);
+});
+it("returns paginated result (second page)", async () => {
+  for (let c of cards) {
+    const userById: UserNumber = parseInt(
+      Object.entries(users).find((e) => c.userId === e[1].id)![0]
+    ) as UserNumber;
+    await request(app)
+      .post("/api/cards")
+      .send(c)
+      .set("Cookie", global.signin(userById));
+  }
+  const allUserCardsResponse = await request(app)
+    .get("/api/cards")
+    .set("Cookie", global.signin(3));
+  const userCardsIds = allUserCardsResponse.body.cards.map(
+    (c: CardDocument) => c.id
+  );
+  const response = await request(app)
+    .get("/api/cards?limit=4&page=1")
+    .set("Cookie", global.signin(3));
+  expect(response.body.pager.total).toEqual(9);
+  expect(response.body.cards.length).toEqual(4);
+  expect(response.body.cards[0].id).toEqual(userCardsIds[4]);
+  expect(response.body.cards[3].id).toEqual(userCardsIds[7]);
 });
