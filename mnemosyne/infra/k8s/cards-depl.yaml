@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cards-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cards
+  template:
+    metadata:
+      labels:
+        app: cards
+    spec:
+      containers:
+        - name: cards
+          image: krodina/cards:latest
+          env:
+            - name: MONGO_URI
+              value: "mongodb://cards-mongo-srv:27017/cards"
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT-KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cards-srv
+spec:
+  selector:
+    app: cards
+  ports:
+    - name: cards
+      protocol: TCP
+      port: 3006
+      targetPort: 3006

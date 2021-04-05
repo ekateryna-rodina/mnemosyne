@@ -14,7 +14,6 @@ export default () => {
       });
       Router.push("/");
     } catch (error) {
-      console.log(error);
       setErrors(error.response.data.errors);
     }
   };

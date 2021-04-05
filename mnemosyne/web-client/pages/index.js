@@ -1,12 +1,11 @@
 import configureRequest from "../utils/configureRequest";
 
 const StatsPage = ({ currentUser }) => {
-  console.log(currentUser);
   {
     if (!currentUser) {
       return <div>No access</div>;
     }
-    return <div>show me my stats/library</div>;
+    return <div>show me my stats/library!!!!</div>;
   }
 };
 

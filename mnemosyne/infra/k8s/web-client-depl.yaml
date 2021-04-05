@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-client-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-client
+  template:
+    metadata:
+      labels:
+        app: web-client
+    spec:
+      containers:
+        - name: web-client
+          image: krodina/web-client
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-client-srv
+spec:
+  selector:
+    app: web-client
+  ports:
+    - name: web-client
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
