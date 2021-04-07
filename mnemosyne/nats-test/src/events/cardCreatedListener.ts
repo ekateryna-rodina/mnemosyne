@@ -1,10 +1,12 @@
 import { Message } from "node-nats-streaming";
 import { BaseListener } from "./baseListener";
-class CardCreatedListener extends BaseListener {
-  subject = "card:created";
+import { CardCreatedEvent } from "./cardCreatedEvent";
+import { Subjects } from "./subjects";
+class CardCreatedListener extends BaseListener<CardCreatedEvent> {
+  subject: Subjects.CardCreated = Subjects.CardCreated;
   queueGroupName = "scheduler-service";
 
-  onMessage(data: any, msg: Message) {
+  onMessage(data: CardCreatedEvent["data"], msg: Message) {
     console.log("I am going to schedule a new card!", data);
 
     msg.ack();

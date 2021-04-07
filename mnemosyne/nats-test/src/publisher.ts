@@ -1,15 +1,19 @@
 import nats from "node-nats-streaming";
+import { CardCreatedPublisher } from "./events/cardCreatedPublisher";
 console.clear();
 const stan = nats.connect("mnemosyne", "abc", { url: "http://localhost:4222" });
 
-stan.on("connect", () => {
+stan.on("connect", async () => {
   console.log("Publisher connected to Nats");
-  const data = JSON.stringify({
+  const data = {
     id: "123",
     phrase: "hello",
-  });
+  };
 
-  stan.publish("card:created", data, () => {
-    console.log("evvent published");
-  });
+  const publisher = new CardCreatedPublisher(stan);
+  try {
+    await publisher.publish(data);
+  } catch (error) {
+    console.log(error);
+  }
 });
