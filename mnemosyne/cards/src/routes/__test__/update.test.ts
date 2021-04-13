@@ -1,5 +1,6 @@
 import request from "supertest";
 import { app } from "../../app";
+import { natsWrapper } from "../../natsWrapper";
 
 it("allows updates for authorized users", async () => {
   const newPhrase = "Yes, absolutely any";
@@ -116,4 +117,26 @@ it("fails if tags array is empty or missing", async () => {
     .send({ tags: [] })
     .set("Cookie", global.signin(1))
     .expect(400);
+});
+
+it("it publishes an event", async () => {
+  const newPhrase = "Yes, absolutely any";
+  const body = {
+    phrase: "This could be any area of knowledge",
+    keywords: { answer: "Harold Ramis" },
+    tags: ["film", "history", "american"],
+  };
+  const card = await request(app)
+    .post("/api/cards")
+    .send(body)
+    .set("Cookie", global.signin(2))
+    .expect(201);
+
+  const updatedCard = await request(app)
+    .patch(`/api/cards/${card.body.id}`)
+    .send({ phrase: newPhrase, tags: ["tag5"] })
+    .set("Cookie", global.signin(2));
+
+  expect(updatedCard.body.phrase).toEqual(newPhrase);
+  expect(natsWrapper.natsClient.publish).toHaveBeenCalled();
 });

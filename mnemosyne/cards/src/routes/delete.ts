@@ -1,4 +1,4 @@
-import { BadRequestError, RequireAuth } from "@krproj/common";
+import { BadRequestError, RequireAuth } from "@meproj/common";
 import express, { NextFunction, Request, Response } from "express";
 import { Card } from "../models/card";
 

@@ -3,10 +3,12 @@ import {
   NotFoundError,
   RequireAuth,
   validateRequest,
-} from "@krproj/common";
+} from "@meproj/common";
 import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
+import { CardUpdatedEventPublisher } from "../events/publishers/cardUpdatedPublisher";
 import { Card, ICard } from "../models/card";
+import { natsWrapper } from "../natsWrapper";
 const router = express.Router();
 
 router.patch(
@@ -53,6 +55,14 @@ router.patch(
       };
       const updatedCard = await Card.findByIdAndUpdate(id, newCardData, {
         new: true,
+      });
+
+      await new CardUpdatedEventPublisher(natsWrapper.natsClient).publish({
+        id: updatedCard!.id,
+        phrase: updatedCard!.phrase,
+        userId: updatedCard!.userId,
+        keywords: updatedCard!.keywords,
+        tags: card.tags,
       });
       res.status(200).send(updatedCard);
     } catch (error) {

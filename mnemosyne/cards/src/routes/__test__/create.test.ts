@@ -2,6 +2,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { users } from "../../data/mockData";
 import { Card } from "../../models/card";
+import { natsWrapper } from "../../natsWrapper";
 
 it("has a route handler which listens for post requests", async () => {
   const response = await request(app).post("/api/cards").send({});
@@ -89,4 +90,20 @@ it("returns 201 on successfull creation", async () => {
     .expect(201);
 
   expect(response.body.userId).toEqual(userId);
+});
+it("it publishes an event", async () => {
+  const userId = users[1].id;
+  const body = {
+    phrase:
+      "Groundhog Day is a 1993 American fantasy comedy film directed by Harold Ramis and written by Ramis and Danny Rubin.",
+    keywords: { answer: "Harold Ramis" },
+    tags: ["film", "history", "american"],
+  };
+  const response = await request(app)
+    .post("/api/cards")
+    .set("Cookie", global.signin(1))
+    .send(body)
+    .expect(201);
+
+  expect(natsWrapper.natsClient.publish).toHaveBeenCalled();
 });

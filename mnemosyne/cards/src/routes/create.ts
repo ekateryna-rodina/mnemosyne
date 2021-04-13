@@ -1,7 +1,9 @@
-import { RequireAuth, validateRequest } from "@krproj/common";
+import { RequireAuth, validateRequest } from "@meproj/common";
 import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
-import { Card } from "../models/card";
+import { CardCreatedEventPublisher } from "../events/publishers/cardCreatedPublisher";
+import { Card, ICard } from "../models/card";
+import { natsWrapper } from "../natsWrapper";
 const router = express.Router();
 
 router.post(
@@ -18,7 +20,7 @@ router.post(
   validateRequest,
   RequireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
-    const { phrase, tags, keywords, isPublic } = req.body;
+    const { phrase, tags, keywords, isPublic }: ICard = req.body;
     try {
       const card = Card.build({
         phrase,
@@ -29,8 +31,16 @@ router.post(
       });
 
       await card.save();
+      await new CardCreatedEventPublisher(natsWrapper.natsClient).publish({
+        id: card.id,
+        phrase: card.phrase,
+        userId: card.userId,
+        keywords: card.keywords,
+        tags: card.tags,
+      });
       res.status(201).send(card);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }

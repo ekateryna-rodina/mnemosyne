@@ -1,4 +1,4 @@
-import { NotFoundError, RequireAuth } from "@krproj/common";
+import { NotFoundError, RequireAuth } from "@meproj/common";
 import express, { NextFunction, Request, Response } from "express";
 import { Card, CardDocument } from "../models/card";
 import { ISearch } from "../models/search";

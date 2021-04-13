@@ -111,7 +111,7 @@ it("returns all cards sorted asc", async () => {
     .expect(200);
 
   const data = response.body.cards.map(
-    (b: CardDocument) => `${b.phrase}_${b.keywords.answer}`
+    (b: CardDocument) => `${b.phrase}_${b.keywords[0].answer}`
   );
   expect(data[0]).toEqual(
     "Me & My Piano is the debut album from American pop singer Krystal Harris as Krystal._Me & My Piano"
@@ -137,7 +137,7 @@ it("returns all cards sorted desc", async () => {
     .expect(200);
 
   const data = response.body.cards.map(
-    (b: CardDocument) => `${b.phrase}_${b.keywords.answer}`
+    (b: CardDocument) => `${b.phrase}_${b.keywords[0].answer}`
   );
 
   expect(data[data.length - 1]).toEqual(

@@ -8,7 +8,11 @@ interface IKeyword {
 }
 export interface ICard {
   phrase: string;
-  keywords: IKeyword;
+  keywords: {
+    question?: string;
+    answer: string;
+    options?: string[] | number[];
+  }[];
   tags: string[];
   image?: string;
   deckId?: string;
@@ -19,7 +23,11 @@ export interface ICard {
 
 export interface CardDocument extends mongoose.Document {
   phrase: string;
-  keywords: IKeyword;
+  keywords: {
+    question?: string;
+    answer: string;
+    options?: string[] | number[];
+  }[];
   tags: string[];
   image?: string;
   deckId?: string;
@@ -45,7 +53,7 @@ const cardSchema = new mongoose.Schema(
       required: true,
     },
     keywords: {
-      type: keywordsSchema,
+      type: [keywordsSchema],
       required: true,
     },
     userId: {
