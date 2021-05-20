@@ -20,7 +20,7 @@ router.post(
   validateRequest,
   RequireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
-    const { phrase, tags, keywords, isPublic }: ICard = req.body;
+    const { phrase, tags, keywords, isPublic, inRepetition }: ICard = req.body;
     try {
       const card = Card.build({
         phrase,
@@ -28,15 +28,18 @@ router.post(
         keywords,
         isPublic,
         userId: req.currentUser!.id,
+        inRepetition,
       });
 
       await card.save();
-      await new CardCreatedEventPublisher(natsWrapper.natsClient).publish({
+
+      await new CardCreatedEventPublisher(natsWrapper.client).publish({
         id: card.id,
         phrase: card.phrase,
         userId: card.userId,
         keywords: card.keywords,
         tags: card.tags,
+        version: card.version,
       });
       res.status(201).send(card);
     } catch (error) {

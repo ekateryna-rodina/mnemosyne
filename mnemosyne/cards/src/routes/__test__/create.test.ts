@@ -105,5 +105,5 @@ it("it publishes an event", async () => {
     .send(body)
     .expect(201);
 
-  expect(natsWrapper.natsClient.publish).toHaveBeenCalled();
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

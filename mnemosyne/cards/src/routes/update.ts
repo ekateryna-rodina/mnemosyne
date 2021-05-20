@@ -7,6 +7,8 @@ import {
 import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
 import { CardUpdatedEventPublisher } from "../events/publishers/cardUpdatedPublisher";
+import { EndRepetitionEventPublisher } from "../events/publishers/endRepetitionPublisher";
+import { StartRepetitionEventPublisher } from "../events/publishers/startRepetitionPublisher";
 import { Card, ICard } from "../models/card";
 import { natsWrapper } from "../natsWrapper";
 const router = express.Router();
@@ -31,15 +33,18 @@ router.patch(
       image,
       isPublic,
       referenceCards,
+      isPriority,
+      inRepetition,
     }: ICard = req.body;
     try {
       let card = await Card.findById(id);
+      const userId = req.currentUser!.id;
       if (!card) {
         throw new NotFoundError();
       }
       //   do not allow to edit personal card by another user
 
-      if (card.userId != req.currentUser!.id) {
+      if (card.userId != userId) {
         throw new BadRequestError("User id does not match");
       }
 
@@ -51,20 +56,40 @@ router.patch(
         image: image || card.image,
         isPublic: isPublic || card.isPublic,
         referenceCards: referenceCards || card.referenceCards,
+        isPriority: isPriority || card.isPriority,
         userId: card.userId,
       };
-      const updatedCard = await Card.findByIdAndUpdate(id, newCardData, {
-        new: true,
-      });
 
-      await new CardUpdatedEventPublisher(natsWrapper.natsClient).publish({
-        id: updatedCard!.id,
-        phrase: updatedCard!.phrase,
-        userId: updatedCard!.userId,
-        keywords: updatedCard!.keywords,
-        tags: card.tags,
+      card.set(newCardData);
+      await card.save();
+
+      if (card.inRepetition !== inRepetition) {
+        if (inRepetition) {
+          if (!card.keywords.length && !keywords.length) {
+            throw new Error("Not enough params for repetition");
+          }
+          await new StartRepetitionEventPublisher(natsWrapper.client).publish({
+            ...newCardData,
+            id: card.id,
+            version: card.version,
+          });
+        } else {
+          await new EndRepetitionEventPublisher(natsWrapper.client).publish({
+            id: card.id,
+            userId: card.userId,
+            version: card.version,
+          });
+        }
+      }
+      await new CardUpdatedEventPublisher(natsWrapper.client).publish({
+        id: card.id,
+        phrase: newCardData.phrase,
+        userId: newCardData.userId,
+        keywords: newCardData.keywords,
+        tags: newCardData.tags,
+        version: card.version,
       });
-      res.status(200).send(updatedCard);
+      res.status(200).send(card);
     } catch (error) {
       console.log(error);
       next(error);

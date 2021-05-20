@@ -19,16 +19,19 @@ const start = async () => {
   if (!process.env.NATS_URL) {
     throw new Error("NATS_URL must be defined");
   }
-  const { MONGO_URI, NATS_CLIENT_ID, NATS_CLUSTER_ID, NATS_URL } = process.env;
+  const { MONGO_URI, NATS_CLUSTER_ID, NATS_CLIENT_ID, NATS_URL } = process.env;
   try {
     // connect to Nats client
+    console.log(`nats cluster id ${NATS_CLUSTER_ID}`);
+    console.log(`nats client id ${NATS_CLIENT_ID}`);
+    console.log(`nats url ${NATS_URL}`);
     await natsWrapper.connect(NATS_CLUSTER_ID, NATS_CLIENT_ID, NATS_URL);
-    natsWrapper.natsClient.on("close", () => {
+    natsWrapper.client.on("close", () => {
       console.log("Nats is closed");
       process.exit();
     });
-    process.on("SIGINT", () => natsWrapper.natsClient.close());
-    process.on("SIGTERM", () => natsWrapper.natsClient.close());
+    process.on("SIGINT", () => natsWrapper.client.close());
+    process.on("SIGTERM", () => natsWrapper.client.close());
     await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

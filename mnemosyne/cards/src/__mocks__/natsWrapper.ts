@@ -1,5 +1,5 @@
 export const natsWrapper = {
-  natsClient: {
+  client: {
     publish: jest
       .fn()
       .mockImplementation(

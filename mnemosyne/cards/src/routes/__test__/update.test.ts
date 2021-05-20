@@ -138,5 +138,5 @@ it("it publishes an event", async () => {
     .set("Cookie", global.signin(2));
 
   expect(updatedCard.body.phrase).toEqual(newPhrase);
-  expect(natsWrapper.natsClient.publish).toHaveBeenCalled();
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

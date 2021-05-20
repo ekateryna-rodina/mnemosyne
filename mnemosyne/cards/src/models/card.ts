@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 // interface to describe properties of a card
 
 interface IKeyword {
@@ -19,6 +20,8 @@ export interface ICard {
   referenceCards?: string[];
   userId: string;
   isPublic?: boolean;
+  inRepetition: boolean;
+  isPriority?: boolean;
 }
 
 export interface CardDocument extends mongoose.Document {
@@ -35,6 +38,9 @@ export interface CardDocument extends mongoose.Document {
   userId: string;
   isPublic?: boolean;
   createdAt: string;
+  inRepetition: boolean;
+  version: number;
+  isPriority: boolean;
 }
 
 interface CardModel extends mongoose.Model<CardDocument> {
@@ -75,6 +81,14 @@ const cardSchema = new mongoose.Schema(
     referenceCards: {
       type: [String],
     },
+    inRepetition: {
+      type: Boolean,
+      default: false,
+    },
+    isPriority: {
+      type: Boolean,
+      default: false,
+    },
     isPublic: {
       type: Boolean,
       default: false,
@@ -90,18 +104,11 @@ const cardSchema = new mongoose.Schema(
     },
   }
 );
-
+cardSchema.set("versionKey", "version");
+cardSchema.plugin(updateIfCurrentPlugin);
 cardSchema.statics.build = (attr: ICard) => {
   return new Card(attr);
 };
+
 const Card = mongoose.model<CardDocument, CardModel>("Card", cardSchema);
 export { Card };
-
-// move to a separate service
-// trainingInfo?: {
-//   totalAttemps: number;
-//   success: number;
-//   lastUpdate: string;
-//   inQueue: boolean;
-//   recentlyFailed: boolean;
-// };
