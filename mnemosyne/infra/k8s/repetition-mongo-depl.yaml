@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: repetition-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: repetition-mongo
+  template:
+    metadata:
+      labels:
+        app: repetition-mongo
+    spec:
+      containers:
+        - name: repetition-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: repetition-mongo-srv
+spec:
+  selector:
+    app: repetition-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

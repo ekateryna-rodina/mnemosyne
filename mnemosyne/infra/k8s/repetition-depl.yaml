@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cards-depl
+  name: repetition-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cards
+      app: repetition
   template:
     metadata:
       labels:
-        app: cards
+        app: repetition
     spec:
       containers:
-        - name: cards
-          image: krodina/cards:latest
+        - name: repetition
+          image: krodina/repetition:latest
           env:
             - name: NATS_CLIENT_ID
               valueFrom:
@@ -25,7 +25,7 @@ spec:
             - name: NATS_URL
               value: "http://nats-srv:4222"
             - name: MONGO_URI
-              value: "mongodb://cards-mongo-srv:27017/cards"
+              value: "mongodb://repetition-mongo-srv:27017/repetition"
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
@@ -35,12 +35,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cards-srv
+  name: repetition-srv
 spec:
   selector:
-    app: cards
+    app: repetition
   ports:
-    - name: cards
+    - name: repetition
       protocol: TCP
-      port: 3006
-      targetPort: 3006
+      port: 3002
+      targetPort: 3002

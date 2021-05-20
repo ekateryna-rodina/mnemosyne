@@ -1,4 +1,4 @@
-import { currentUser } from "@krproj/common";
+import { currentUser } from "@meproj/common";
 import express from "express";
 const router = express.Router();
 router.get("/api/users/currentuser", currentUser, (req, res) => {

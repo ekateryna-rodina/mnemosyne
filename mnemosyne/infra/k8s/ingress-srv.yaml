@@ -17,6 +17,27 @@ spec:
                 name: auth-srv
                 port:
                   number: 3005
+          - path: /api/cards/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: cards-srv
+                port:
+                  number: 3006
+          - path: /api/repetition/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: repetition-srv
+                port:
+                  number: 3002
+          - path: /api/repetition-history/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: repetition-history-srv
+                port:
+                  number: 3007
           - path: /?(.*)
             pathType: Prefix
             backend:

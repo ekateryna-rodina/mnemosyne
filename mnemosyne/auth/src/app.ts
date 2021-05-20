@@ -1,4 +1,4 @@
-import { currentUser, errorHandler, NotFoundError } from "@krproj/common";
+import { currentUser, errorHandler, NotFoundError } from "@meproj/common";
 import cookieSession from "cookie-session";
 import express from "express";
 import { currentUserRouter } from "./routes/currentuser";

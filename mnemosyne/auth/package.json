@@ -1,6 +1,6 @@
 {
   "name": "auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Auth service for mnemosyne",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "author": "krodina",
   "license": "ISC",
   "dependencies": {
-    "@krproj/common": "^1.0.3",
+    "@meproj/common": "^1.0.1",
     "@types/cookie-session": "^2.0.42",
     "@types/express": "^4.17.11",
     "@types/jsonwebtoken": "^8.5.1",

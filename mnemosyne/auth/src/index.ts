@@ -1,4 +1,4 @@
-import { DatabaseConnectionError } from "@krproj/common";
+import { DatabaseConnectionError } from "@meproj/common";
 import mongoose from "mongoose";
 import { app } from "./app";
 

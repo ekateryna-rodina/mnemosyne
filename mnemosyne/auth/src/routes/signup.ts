@@ -1,4 +1,4 @@
-import { BadRequestError, validateRequest } from "@krproj/common";
+import { BadRequestError, validateRequest } from "@meproj/common";
 import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
@@ -39,7 +39,7 @@ router.post(
       req.session = {
         jwt: userJwt,
       };
-
+      console.log(userJwt);
       res.status(201).send(user);
     } catch (error) {
       next(error);

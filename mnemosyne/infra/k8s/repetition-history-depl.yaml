@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-depl
+  name: repetition-history-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: repetition-history
   template:
     metadata:
       labels:
-        app: auth
+        app: repetition-history
     spec:
       containers:
-        - name: auth
-          image: krodina/auth:latest
+        - name: repetition-history
+          image: krodina/repetition-history:latest
           env:
             - name: MONGO_URI
-              value: "mongodb://auth-mongo-srv:27017/auth"
+              value: "mongodb://repetition-history-mongo-srv:27017/repetition-history"
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
@@ -27,12 +27,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv
+  name: repetition-history-srv
 spec:
   selector:
-    app: auth
+    app: repetition-history
   ports:
-    - name: auth
+    - name: repetition-history
       protocol: TCP
-      port: 3005
-      targetPort: 3005
+      port: 3007
+      targetPort: 3007
