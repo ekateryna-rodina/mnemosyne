@@ -1,4 +1,4 @@
-import { currentUser, errorHandler, NotFoundError } from "@meproj/common";
+import { errorHandler, NotFoundError } from "@meproj/common";
 import cookieSession from "cookie-session";
 import express from "express";
 
@@ -18,8 +18,6 @@ app.use(
     secure: process.env.NODE_ENV !== "test",
   })
 );
-
-app.use(currentUser);
 
 app.all("*", (req, res, next) => {
   next(new NotFoundError());
