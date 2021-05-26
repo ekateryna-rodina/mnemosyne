@@ -1,9 +1,12 @@
 import { RepetitionStatus } from "@meproj/common";
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { CardDocument } from "./card";
 interface RepetitionAttrs {
   userId: string;
-  card: CardDocument;
+  cardId: string;
+  card: string;
+  version: number;
   result?: "success" | "failure";
 }
 
@@ -14,6 +17,7 @@ export interface RepetitionDocument extends mongoose.Document {
   totalAttempts: number;
   successfullAttempts: number;
   card: CardDocument;
+  cardId: string;
   createdAt: string;
   updatedAt: string;
   nextRepetition: string;
@@ -22,6 +26,10 @@ export interface RepetitionDocument extends mongoose.Document {
 
 interface RepetitionModel extends mongoose.Model<RepetitionDocument> {
   build(attr: RepetitionAttrs): RepetitionDocument;
+  findByIdAndPreVersion(event: {
+    cardId: string;
+    version: number;
+  }): Promise<RepetitionDocument | null>;
 }
 
 const repetitionSchema = new mongoose.Schema(
@@ -62,6 +70,9 @@ const repetitionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    cardId: {
+      type: String,
+    },
     card: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Card",
@@ -77,11 +88,16 @@ const repetitionSchema = new mongoose.Schema(
     },
   }
 );
-
+repetitionSchema.set("versionKey", "version");
+repetitionSchema.plugin(updateIfCurrentPlugin);
 repetitionSchema.statics.build = (attr: RepetitionAttrs) => {
   return new Repetition(attr);
 };
-
+repetitionSchema.statics.findByIdAndPreVersion = async (event) => {
+  const { cardId, version } = event;
+  const repetition = await Repetition.findOne({ cardId, version: version - 1 });
+  return repetition;
+};
 const Repetition = mongoose.model<RepetitionDocument, RepetitionModel>(
   "Repetition",
   repetitionSchema

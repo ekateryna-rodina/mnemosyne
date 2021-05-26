@@ -23,7 +23,6 @@ router.patch(
   async (req: Request, res: Response, next: NextFunction) => {
     const repetitionId: string =
       req.params.repetitionId ?? req.query.repetitionId;
-    console.log(repetitionId);
     const userId = req.currentUser!.id;
     const { result, cardId } = req.body;
     let repetition: RepetitionDocument | null;

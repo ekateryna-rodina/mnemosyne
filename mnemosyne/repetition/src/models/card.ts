@@ -18,6 +18,7 @@ export interface ICard {
   userId: string;
   isPriority?: boolean;
   tags: string[];
+  version: number;
 }
 
 export interface CardDocument extends mongoose.Document {
@@ -31,6 +32,7 @@ export interface CardDocument extends mongoose.Document {
   userId: string;
   isPriority: boolean;
   tags: string[];
+  version: number;
 }
 
 interface CardModel extends mongoose.Model<CardDocument> {
@@ -73,6 +75,10 @@ const cardSchema = new mongoose.Schema(
       type: [{ type: String }],
       required: true,
     },
+    version: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -92,9 +98,13 @@ cardSchema.statics.build = (attr: ICard) => {
     ...attr,
   });
 };
-cardSchema.statics.findByIdAndPreVersion = (event) => {
+cardSchema.statics.findByIdAndPreVersion = async (event) => {
   const { id, version } = event;
-  return Card.findOne({ _id: id, version: version - 1 });
+  const noversionall = await Card.find({});
+  return await Card.findOne({
+    _id: mongoose.Types.ObjectId(id),
+    version: version - 1,
+  });
 };
 const Card = mongoose.model<CardDocument, CardModel>("Card", cardSchema);
 export { Card };

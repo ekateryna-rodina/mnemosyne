@@ -19,6 +19,7 @@ it("responds with a status to authenticated users and updates fields", async () 
     userId,
     isPriority: true,
     tags: ["tag1"],
+    version: 2,
   };
 
   const repetitionResponse = await request(app)

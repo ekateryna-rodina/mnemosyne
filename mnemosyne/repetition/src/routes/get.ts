@@ -10,7 +10,6 @@ router.get(
     const userId = req.currentUser!.id;
     try {
       const repetitions = await Repetition.find({ userId });
-      console.log(repetitions);
       res.status(200).send(repetitions);
     } catch (error) {
       next(error);

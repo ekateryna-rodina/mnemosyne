@@ -1,9 +1,7 @@
 import { currentUser, errorHandler, NotFoundError } from "@meproj/common";
 import cookieSession from "cookie-session";
 import express from "express";
-import { archiveRepetitionRouter } from "./routes/archive";
 import { getRepetitionRouter } from "./routes/get";
-import { startRepetitionRouter } from "./routes/start";
 import { updateRepetitionRouter } from "./routes/update";
 
 const app = express();
@@ -25,10 +23,8 @@ app.use(
 
 app.use(currentUser);
 
-app.use(startRepetitionRouter);
 app.use(updateRepetitionRouter);
 app.use(getRepetitionRouter);
-app.use(archiveRepetitionRouter);
 
 app.all("*", (req, res, next) => {
   next(new NotFoundError());
