@@ -43,12 +43,12 @@ export class StatusUpdater {
     const pendingRepetitions = await Repetition.find({
       status: RepetitionStatus.Pending,
     });
-    const pendingRepetitionsIds = idleRepetitions.map((r) => r.id);
+    const pendingRepetitionsIds = pendingRepetitions.map((r) => r.id);
 
     const inProgressRepetitions = await Repetition.find({
       status: RepetitionStatus.InProgress,
     });
-    const inProgressRepetitionsIds = idleRepetitions.map((r) => r.id);
+    const inProgressRepetitionsIds = inProgressRepetitions.map((r) => r.id);
     // idle status
     new RepetitionStatusUpdatedEventPublisher(natsWrapper.client).publish({
       status: RepetitionStatus.Idle,
