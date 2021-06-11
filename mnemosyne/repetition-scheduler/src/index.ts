@@ -8,6 +8,7 @@ import { jobInterval } from "./jobConfig";
 import { JobScheduler } from "./jobScheduler";
 // import { cronClient } from "./jobScheduler";
 import { natsWrapper } from "./natsWrapper";
+import { StatusUpdater } from "./statusUpdater";
 
 const start = async () => {
   if (!process.env.MONGO_URI) {
@@ -48,9 +49,8 @@ const start = async () => {
   } catch (err) {
     throw new DatabaseConnectionError();
   }
-  // run the job!
-  // cronClient.startJob();
-  JobScheduler.scheduleJob(jobInterval, () => console.log("hello"));
+  // run the master job
+  JobScheduler.scheduleJob(jobInterval, () => StatusUpdater.checkAndUpdate());
   app.listen(3009, () => {
     console.log("version 100");
     console.log("listening on port 3009");

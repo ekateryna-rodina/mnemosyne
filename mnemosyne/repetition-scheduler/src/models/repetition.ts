@@ -43,7 +43,7 @@ const repetitionSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      default: RepetitionStatus.Pending,
+      default: RepetitionStatus.Idle,
       enum: Object.keys(RepetitionStatus),
     },
     interval: {
