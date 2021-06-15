@@ -5,14 +5,14 @@ import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 export interface IFollower {
   id: string;
   username: string;
-  followers?: string[];
-  following?: string[];
+  followersIds?: string[];
+  followingIds?: string[];
 }
 
 export interface FollowerDocument extends mongoose.Document {
   username: string;
-  followers?: string[];
-  following?: string[];
+  followersIds?: string[];
+  followingIds?: string[];
   version: number;
 }
 
@@ -26,12 +26,14 @@ const followerSchema = new mongoose.Schema(
       type: "string",
       required: true,
     },
-    followers: {
-      type: [{ type: String }],
+    followersIds: {
+      type: [{ type: String, required: false }],
     },
-    following: {
-      type: [{ type: String }],
+    followingIds: {
+      type: [{ type: String, required: false }],
     },
+    // followers: [{ type: mongoose.Types.ObjectId(), ref: "Follower" }],
+    // following: [{ type: mongoose.Types.ObjectId(), ref: "Follower" }],
   },
   {
     timestamps: true,

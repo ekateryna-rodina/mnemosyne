@@ -3,7 +3,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { users } from "../../data/mockData";
 import { Follower } from "../../models/follower";
-// user;
+
 beforeEach(async () => {
   let user1 = Follower.build({
     id: users[1].id,
@@ -19,29 +19,51 @@ beforeEach(async () => {
   });
   await Follower.insertMany([user1, user2, user3]);
 });
-it("listens for post requests and responds with ok to auth users", async () => {
+it("listens for patch requests and responds with ok to auth users", async () => {
   await request(app)
-    .post("/api/follow/")
-    .send({ userId: mongoose.Types.ObjectId() })
+    .patch(`/api/follow/${mongoose.Types.ObjectId()}`)
     .expect(401);
 
   await request(app)
-    .post("/api/follow/")
+    .patch(`/api/follow/${users[2].id}`)
     .set("Cookie", global.signin(3))
-    .send({ userId: mongoose.Types.ObjectId() })
     .expect(200);
 });
-it("adds a valid user to follow to collection of following of current user", async () => {
-  let follower1 = await Follower.findById(users[1].id);
-  let follower2 = await Follower.findById(users[2].id);
+it("adds a valid user to follow to collection of following of current user and populates followers of another user successfully", async () => {
+  let follower1;
+  let follower2;
+  let follower3;
   await request(app)
-    .post("/api/follow/")
+    .patch(`/api/follow/${users[2].id}`)
     .set("Cookie", global.signin(1))
-    .send({ userId: follower2 })
     .expect(200);
-  expect(follower2?.followers?.length).toEqual(2);
+  follower1 = await Follower.findById(users[1].id);
+  follower2 = await Follower.findById(users[2].id);
+  expect(follower1?.followingIds?.length).toEqual(1);
+  expect(follower2?.followersIds?.length).toEqual(1);
+
+  await request(app)
+    .patch(`/api/follow/${users[2].id}`)
+    .set("Cookie", global.signin(3))
+    .expect(200);
+  follower2 = await Follower.findById(users[2].id);
+  follower3 = await Follower.findById(users[3].id);
+  expect(follower2?.followersIds?.length).toEqual(2);
+  expect(follower3?.followingIds?.length).toEqual(1);
 });
-it("adds current user as a follower to another user", async () => {
-  let follower2 = await Follower.findById(users[2].id);
-  expect(follower2?.followers?.length).toEqual(2);
+it("fails to add followers and following if user does not exist", async () => {
+  await request(app)
+    .patch(`/api/follow/${mongoose.Types.ObjectId()}`)
+    .set("Cookie", global.signin(1))
+    .expect(400);
+});
+it("fails to add followers and following if user is added already", async () => {
+  await request(app)
+    .patch(`/api/follow/${users[2].id}`)
+    .set("Cookie", global.signin(3))
+    .expect(200);
+  await request(app)
+    .patch(`/api/follow/${users[2].id}`)
+    .set("Cookie", global.signin(3))
+    .expect(400);
 });
