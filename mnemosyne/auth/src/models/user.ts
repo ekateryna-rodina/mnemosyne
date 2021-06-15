@@ -5,6 +5,7 @@ import { Password } from "../utils/password";
 interface IUser {
   email: string;
   password: string;
+  username?: string;
 }
 // An interface to include new method
 interface UserModel extends mongoose.Model<UserDocument> {
@@ -14,6 +15,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
 interface UserDocument extends mongoose.Document {
   email: string;
   password: string;
+  username: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,6 +26,10 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     password: {
+      type: String,
+      required: true,
+    },
+    username: {
       type: String,
       required: true,
     },

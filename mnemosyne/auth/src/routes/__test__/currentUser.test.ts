@@ -2,7 +2,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { getCookie } from "../../utils/test";
 
-it("fill response with user info", async () => {
+it("fills response with user info", async () => {
   const cookie = await getCookie();
   const response = await request(app)
     .get("/api/users/currentuser")

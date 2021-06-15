@@ -7,6 +7,7 @@ it("returns 200 when sign in with valid credentials", async () => {
     .send({
       email: "test@gmail.com",
       password: "password123",
+      username: "user1",
     })
     .expect(201);
   await request(app)
@@ -49,6 +50,7 @@ it("sets cookie after successfull signin", async () => {
     .send({
       email: "test@gmail.com",
       password: "password123",
+      username: "user1",
     })
     .expect(201);
   const response = await request(app)

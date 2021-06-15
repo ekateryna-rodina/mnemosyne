@@ -1,6 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 
+jest.mock("../natsWrapper");
 let mongo: any;
 beforeAll(async () => {
   process.env.JWT_KEY = "secret";

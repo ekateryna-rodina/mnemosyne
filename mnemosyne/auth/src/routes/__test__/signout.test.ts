@@ -7,6 +7,7 @@ it("cleans jwt from cookie", async () => {
     .send({
       email: "test@gmail.com",
       password: "password123",
+      username: "user1",
     })
     .expect(201);
 
