@@ -3,6 +3,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { users } from "../../data/mockData";
 import { Follower } from "../../models/follower";
+import { natsWrapper } from "../../natsWrapper";
 
 beforeEach(async () => {
   let user1 = Follower.build({
@@ -50,6 +51,8 @@ it("adds a valid user to follow to collection of following of current user and p
   follower3 = await Follower.findById(users[3].id);
   expect(follower2?.followersIds?.length).toEqual(2);
   expect(follower3?.followingIds?.length).toEqual(1);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
 it("fails to add followers and following if user does not exist", async () => {
   await request(app)

@@ -32,8 +32,8 @@ const followerSchema = new mongoose.Schema(
     followingIds: {
       type: [{ type: String, required: false }],
     },
-    // followers: [{ type: mongoose.Types.ObjectId(), ref: "Follower" }],
-    // following: [{ type: mongoose.Types.ObjectId(), ref: "Follower" }],
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Follower" }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "Follower" }],
   },
   {
     timestamps: true,

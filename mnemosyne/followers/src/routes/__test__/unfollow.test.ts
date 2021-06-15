@@ -3,6 +3,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { users } from "../../data/mockData";
 import { Follower } from "../../models/follower";
+import { natsWrapper } from "../../natsWrapper";
 
 beforeEach(async () => {
   let user1 = Follower.build({
@@ -53,6 +54,8 @@ it("remove a valid user to follow from collection of following of current user a
   follower3 = await Follower.findById(users[3].id);
   expect(follower2?.followersIds?.length).toEqual(0);
   expect(follower3?.followingIds?.length).toEqual(0);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
 it("fails to remove followers and following if user does not exist", async () => {
   await request(app)
