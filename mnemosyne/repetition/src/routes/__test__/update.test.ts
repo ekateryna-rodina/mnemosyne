@@ -3,13 +3,11 @@ import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
 import { users } from "../../data/mockData";
-import { ICard } from "../../models/card";
+import { Card, ICard } from "../../models/card";
+import { Repetition } from "../../models/repetition";
+import { natsWrapper } from "../../natsWrapper";
 
-it("responds with a status to authenticated users and updates fields", async () => {
-  await request(app)
-    .patch("/api/repetition/:repetitionId")
-    .send({})
-    .expect(401);
+it("updates fields and publishes an event", async () => {
   const userId = users[2].id;
   const body: ICard = {
     id: mongoose.Types.ObjectId().toString(),
@@ -22,23 +20,29 @@ it("responds with a status to authenticated users and updates fields", async () 
     version: 2,
   };
 
-  const repetitionResponse = await request(app)
-    .post("/api/repetition")
-    .send(body)
-    .set("Cookie", global.signin(2))
-    .expect(201);
+  const card = Card.build(body);
+  await card.save();
 
+  const repetition = await Repetition.build({
+    cardId: card.id,
+    card,
+    userId,
+    version: 0,
+  });
+  await repetition.save();
   const updatedRepetitionResponse = await request(app)
-    .patch(`/api/repetition/${repetitionResponse.body.id}`)
+    .patch(`/api/repetition/${repetition.id}`)
     .send({ cardId: body.id, result: RepetitionResult.Success })
     .set("Cookie", global.signin(2))
     .expect(200);
 
   expect(updatedRepetitionResponse.body).not.toBeNull();
   expect(updatedRepetitionResponse.body?.totalAttempts).toEqual(
-    repetitionResponse.body.totalAttempts + 1
+    repetition.totalAttempts + 1
   );
   expect(updatedRepetitionResponse.body?.successfullAttempts).toEqual(
-    repetitionResponse.body.successfullAttempts + 1
+    repetition.successfullAttempts + 1
   );
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

@@ -35,8 +35,10 @@ router.patch(
       );
       // publish event to inform cards and profile services
       await new UserFollowedEventPublisher(natsWrapper.client).publish({
-        id: userId,
-        userIdToFollow: userIdToFollow,
+        userIdFollower: userId,
+        userIdFollowing: userIdToFollow,
+        img: "image",
+        username: "username", // fetch from profile
       });
       res.status(200).send({});
     } catch (error) {

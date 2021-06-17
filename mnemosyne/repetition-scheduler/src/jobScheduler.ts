@@ -4,8 +4,7 @@ export class JobScheduler {
     scheduleDate: Date | string,
     scheduleFunction: CronCommand
   ) => {
-    const date = new Date(scheduleDate);
-    const scheduleJob = new CronJob(scheduleDate, scheduleFunction);
+    const scheduleJob = new CronJob("1 */5 * * * *", scheduleFunction);
     scheduleJob.start();
   };
 }

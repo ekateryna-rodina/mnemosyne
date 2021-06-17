@@ -1,10 +1,10 @@
 export enum RepetitionStatus {
-  // 24 hours before training should be started
+  // in transition to inProgress
   Pending = "Pending",
   // training in progress
   InProgress = "InProgress",
-  // Recently trained
-  Revisited = "Revisited",
+  // just waiting
+  Idle = "Idle",
   // completed all intervals
   Completed = "Completed",
 }

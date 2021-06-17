@@ -1,13 +1,13 @@
-import { RepetitionStatus } from "@meproj/common";
+import { RepetitionResult, RepetitionStatus } from "@meproj/common";
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { CardDocument } from "./card";
 interface RepetitionAttrs {
   userId: string;
   cardId: string;
-  card: string;
+  card: CardDocument;
   version: number;
-  result?: "success" | "failure";
+  result?: RepetitionResult;
 }
 
 export interface RepetitionDocument extends mongoose.Document {
@@ -22,6 +22,7 @@ export interface RepetitionDocument extends mongoose.Document {
   updatedAt: string;
   nextRepetition: string;
   isArchived: boolean;
+  version: number;
 }
 
 interface RepetitionModel extends mongoose.Model<RepetitionDocument> {
@@ -41,7 +42,7 @@ const repetitionSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      default: RepetitionStatus.Pending,
+      default: RepetitionStatus.Idle,
       enum: Object.keys(RepetitionStatus),
     },
     interval: {

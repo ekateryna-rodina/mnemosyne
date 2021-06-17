@@ -33,8 +33,8 @@ router.patch(
       );
       // publish event to inform cards and profile services
       await new UserUnfollowedEventPublisher(natsWrapper.client).publish({
-        id: userId,
-        userIdToUnfollow: userIdToUnfollow,
+        userIdFollower: userId,
+        userIdFollowing: userIdToUnfollow,
       });
       res.status(200).send({});
     } catch (error) {

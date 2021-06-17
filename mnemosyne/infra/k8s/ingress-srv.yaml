@@ -37,7 +37,28 @@ spec:
               service:
                 name: repetition-history-srv
                 port:
-                  number: 3007
+                  number: 3008
+          - path: /api/repetition-scheduler/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: repetition-scheduler-srv
+                port:
+                  number: 3009
+          - path: /api/followers/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: followers-srv
+                port:
+                  number: 3010
+          - path: /api/user-profiles/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: user-profiles-srv
+                port:
+                  number: 3011
           - path: /?(.*)
             pathType: Prefix
             backend:

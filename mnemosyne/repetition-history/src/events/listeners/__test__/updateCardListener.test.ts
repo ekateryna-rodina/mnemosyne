@@ -48,7 +48,7 @@ it("updates a card", async () => {
   const card = await Card.findById(data.id);
   expect(card).toBeDefined();
   expect(card!.phrase).toEqual(data.phrase);
-  expect(card!.version).toEqual(data.version);
+  expect(card!.version).toEqual(data.version - 1);
 });
 it("acknowleges the nats client", async () => {
   const { listener, data, message } = await setup();

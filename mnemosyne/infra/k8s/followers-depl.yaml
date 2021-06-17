@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: followers-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: followers
+  template:
+    metadata:
+      labels:
+        app: followers
+    spec:
+      containers:
+        - name: followers
+          image: krodina/followers:latest
+          env:
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_CLUSTER_ID
+              value: mnemosyne
+            - name: NATS_URL
+              value: "http://nats-srv:4222"
+            - name: MONGO_URI
+              value: "mongodb://followers-mongo-srv:27017/followers"
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: followers-srv
+spec:
+  selector:
+    app: followers
+  ports:
+    - name: followers
+      protocol: TCP
+      port: 3010
+      targetPort: 3010

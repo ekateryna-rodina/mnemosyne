@@ -34,7 +34,7 @@ it("creates a new repetition", async () => {
   const repetition = repetitions[0];
   expect(repetition).toBeDefined();
   expect(repetition!.card.isPriority).toEqual(true);
-  expect(repetition!.status).toEqual(RepetitionStatus.Pending);
+  expect(repetition!.status).toEqual(RepetitionStatus.Idle);
   expect(repetition!.interval).toEqual(24);
   expect(repetition!.totalAttempts).toEqual(0);
 });

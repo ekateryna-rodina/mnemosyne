@@ -1,6 +1,7 @@
 import { DatabaseConnectionError } from "@meproj/common";
 import mongoose from "mongoose";
 import { app } from "./app";
+import { UserRegisteredListener } from "./events/listeners/userRegisteredListener";
 import { natsWrapper } from "./natsWrapper";
 
 const start = async () => {
@@ -32,6 +33,8 @@ const start = async () => {
     });
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
+    // enable listeners
+    new UserRegisteredListener(natsWrapper.client).listen();
     await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

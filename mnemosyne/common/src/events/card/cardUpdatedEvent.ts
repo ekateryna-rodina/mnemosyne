@@ -14,5 +14,7 @@ export interface CardUpdatedEvent {
     userId: string;
     isPublic?: boolean;
     version: number;
+    image?: string;
+    isPriority?: boolean;
   };
 }

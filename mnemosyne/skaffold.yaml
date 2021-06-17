@@ -48,3 +48,27 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: krodina/followers
+      context: followers
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: krodina/user-profiles
+      context: user-profiles
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: krodina/repetition-scheduler
+      context: repetition-scheduler
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .

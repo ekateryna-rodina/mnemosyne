@@ -3,7 +3,8 @@ import { Subjects } from "../subjects";
 export interface StartRepetitionEvent {
   subject: Subjects.RepetitionStarted;
   data: {
-    id: string;
+    repetitionId?: string;
+    cardId: string;
     phrase: string;
     keywords: {
       question?: string;
@@ -13,5 +14,8 @@ export interface StartRepetitionEvent {
     tags: string[];
     userId: string;
     version: number;
+    image?: string;
+    isPriority: boolean;
+    nextRepetition?: string;
   };
 }

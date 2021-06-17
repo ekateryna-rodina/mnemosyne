@@ -1,4 +1,9 @@
-import { BaseListener, Subjects, UpdateRepetitionEvent } from "@meproj/common";
+import {
+  BaseListener,
+  RepetitionResult,
+  Subjects,
+  UpdateRepetitionEvent,
+} from "@meproj/common";
 import { Message } from "node-nats-streaming";
 import { RepetitionHistory } from "../../models/repetitionHistory";
 import { queueGroupName } from "../queueGroupName";
@@ -16,6 +21,12 @@ export class UpdateRepetitionListener extends BaseListener<UpdateRepetitionEvent
       totalAttempts,
       successfullAttempts,
     } = data;
+
+    const newTotal = totalAttempts + 1;
+    const newSuccessfull =
+      result == RepetitionResult.Success
+        ? successfullAttempts + 1
+        : successfullAttempts;
 
     const repetitionHistoryDoc = RepetitionHistory.build({
       repetitionId,

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-profiles-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-profiles
+  template:
+    metadata:
+      labels:
+        app: user-profiles
+    spec:
+      containers:
+        - name: user-profiles
+          image: krodina/user-profiles:latest
+          env:
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_CLUSTER_ID
+              value: mnemosyne
+            - name: NATS_URL
+              value: "http://nats-srv:4222"
+            - name: MONGO_URI
+              value: "mongodb://user-profiles-mongo-srv:27017/user-profiles"
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-profiles-srv
+spec:
+  selector:
+    app: user-profiles
+  ports:
+    - name: user-profiles
+      protocol: TCP
+      port: 3011
+      targetPort: 3011

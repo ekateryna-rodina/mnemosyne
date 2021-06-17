@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: repetition-scheduler-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: repetition-scheduler-mongo
+  template:
+    metadata:
+      labels:
+        app: repetition-scheduler-mongo
+    spec:
+      containers:
+        - name: repetition-scheduler-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: repetition-scheduler-mongo-srv
+spec:
+  selector:
+    app: repetition-scheduler-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: repetition-scheduler-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: repetition-scheduler-mongo
+  template:
+    metadata:
+      labels:
+        app: repetition-scheduler-mongo
+    spec:
+      containers:
+        - name: repetition-scheduler-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: repetition-scheduler-mongo-srv
+spec:
+  selector:
+    app: repetition-scheduler-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

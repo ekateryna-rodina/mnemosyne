@@ -14,5 +14,7 @@ export interface CardCreatedEvent {
     userId: string;
     isPublic?: boolean;
     version: number;
+    image?: string;
+    inRepetition?: boolean;
   };
 }

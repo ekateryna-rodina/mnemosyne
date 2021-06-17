@@ -32,10 +32,10 @@ export class StartRepetitionListener extends BaseListener<StartRepetitionEvent> 
       version,
     });
 
-    const newCard = await cardDoc.save();
+    await cardDoc.save();
     const repetitionDoc = Repetition.build({
       userId,
-      card: cardId,
+      card: cardDoc,
       cardId: cardId,
       version: 0,
     });
