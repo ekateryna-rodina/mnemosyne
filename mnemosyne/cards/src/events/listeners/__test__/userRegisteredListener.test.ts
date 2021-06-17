@@ -5,8 +5,8 @@ import { Follower } from "../../../models/follower";
 import { natsWrapper } from "../../../natsWrapper";
 import { UserRegisteredListener } from "../userRegisteredListener";
 
-const userIdFollowing: string = mongoose.Types.ObjectId().toString();
-const userIdFollower: string = mongoose.Types.ObjectId().toString();
+const userIdFollowing = mongoose.Types.ObjectId().toString();
+const userIdFollower = mongoose.Types.ObjectId().toString();
 
 const setup = async () => {
   const listener = new UserRegisteredListener(natsWrapper.client);

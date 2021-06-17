@@ -4,8 +4,8 @@ import { Message } from "node-nats-streaming";
 import { Follower } from "../../../models/follower";
 import { natsWrapper } from "../../../natsWrapper";
 import { UserUnfollowedListener } from "../userUnfollowedListener";
-const userIdFollowing: string = mongoose.Types.ObjectId().toString();
-const userIdFollower: string = mongoose.Types.ObjectId().toString();
+const userIdFollowing = mongoose.Types.ObjectId().toString();
+const userIdFollower = mongoose.Types.ObjectId().toString();
 beforeEach(async () => {
   let followerModel = Follower.build({
     userId: userIdFollower,
@@ -29,9 +29,11 @@ const setup = async () => {
 it("removes from following of the user", async () => {
   const { listener, data, message } = await setup();
   await listener.onMessage(data, message);
-  const follower = await Follower.find({});
-  expect(follower[0]).toBeDefined();
-  expect(follower[0].following.length).toEqual(0);
+  const follower = await Follower.findOne({
+    userId: userIdFollower,
+  });
+  expect(follower).toBeDefined();
+  expect(follower?.following.length).toEqual(0);
 });
 it("acknowleges the nats client", async () => {
   const { listener, data, message } = await setup();

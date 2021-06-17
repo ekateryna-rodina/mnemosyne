@@ -9,7 +9,9 @@ export class UserUnfollowedListener extends BaseListener<UserUnfollowedEvent> {
   async onMessage(data: UserUnfollowedEvent["data"], message: Message) {
     const { userIdFollower, userIdFollowing } = data;
     const followerDoc = await Follower.findOne({ userId: userIdFollower });
-    followerDoc?.following.filter((f) => f.userId !== userIdFollowing);
+    await followerDoc?.update({
+      $pull: { following: { userId: userIdFollowing } },
+    });
     await followerDoc?.save();
 
     message.ack();
