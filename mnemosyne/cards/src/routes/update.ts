@@ -70,12 +70,12 @@ router.patch(
           }
           await new StartRepetitionEventPublisher(natsWrapper.client).publish({
             ...newCardData,
-            id: card.id,
+            cardId: card.id,
             version: card.version,
           });
         } else {
           await new EndRepetitionEventPublisher(natsWrapper.client).publish({
-            id: card.id,
+            cardId: card.id,
             userId: card.userId,
             version: card.version,
           });

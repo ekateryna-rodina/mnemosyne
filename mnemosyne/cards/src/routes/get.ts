@@ -23,14 +23,6 @@ router.get(
 
 router.get(
   "/api/cards/",
-  // checkSchema({
-  //   limit: {
-  //     in: ["params", "query"],
-  //     errorMessage: "ID is wrong",
-  //     isInt: true,
-  //     toInt: true,
-  //   },
-  // }),
   RequireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.currentUser!.id;

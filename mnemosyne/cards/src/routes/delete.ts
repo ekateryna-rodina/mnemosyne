@@ -1,6 +1,8 @@
 import { BadRequestError, RequireAuth } from "@meproj/common";
 import express, { NextFunction, Request, Response } from "express";
+import { CardDeletedEventPublisher } from "../events/publishers/cardDeletedPublisher";
 import { Card } from "../models/card";
+import { natsWrapper } from "../natsWrapper";
 
 const router = express.Router();
 
@@ -11,7 +13,6 @@ router.delete(
     const cardId = req.params.id;
     const userId = req.currentUser!.id;
     try {
-      console.log(cardId);
       const card = await Card.findById(cardId);
       if (!card) {
         throw new BadRequestError("Card does not exist");
@@ -21,6 +22,12 @@ router.delete(
       }
 
       await card.remove();
+      await new CardDeletedEventPublisher(natsWrapper.client).publish({
+        id: card.id,
+        userId: card.userId,
+        version: card.version,
+      });
+
       res.status(200).send({});
     } catch (error) {
       console.log(error);

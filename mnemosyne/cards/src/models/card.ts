@@ -20,7 +20,7 @@ export interface ICard {
   referenceCards?: string[];
   userId: string;
   isPublic?: boolean;
-  inRepetition: boolean;
+  inRepetition?: boolean;
   isPriority?: boolean;
 }
 
@@ -38,7 +38,7 @@ export interface CardDocument extends mongoose.Document {
   userId: string;
   isPublic?: boolean;
   createdAt: string;
-  inRepetition: boolean;
+  inRepetition?: boolean;
   version: number;
   isPriority: boolean;
 }
@@ -73,7 +73,8 @@ const cardSchema = new mongoose.Schema(
       required: true,
     },
     image: {
-      type: Number,
+      type: String,
+      required: false,
     },
     deckId: {
       type: String,
@@ -83,6 +84,7 @@ const cardSchema = new mongoose.Schema(
     },
     inRepetition: {
       type: Boolean,
+      required: false,
       default: false,
     },
     isPriority: {

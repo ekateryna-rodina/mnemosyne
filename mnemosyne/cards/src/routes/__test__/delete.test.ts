@@ -1,7 +1,8 @@
 import request from "supertest";
 import { app } from "../../app";
+import { natsWrapper } from "../../natsWrapper";
 
-it("sends status 200 on delete", async () => {
+it("sends status 200 on delete and publishes an event", async () => {
   const response = await request(app)
     .post("/api/cards/")
     .send({
@@ -12,11 +13,11 @@ it("sends status 200 on delete", async () => {
     })
     .set("Cookie", global.signin(1))
     .expect(201);
-  console.log(response.body);
   await request(app)
     .delete(`/api/cards/${response.body.id}`)
     .set("Cookie", global.signin(1))
     .expect(200);
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
 
 it("the card is removed sucessfully", async () => {
