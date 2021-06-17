@@ -18,7 +18,7 @@
   "author": "krodina",
   "license": "ISC",
   "dependencies": {
-    "@meproj/common": "^1.0.39",
+    "@meproj/common": "^1.0.40",
     "@types/express": "^4.17.11",
     "express": "^4.17.1",
     "mongoose": "^5.12.2",
